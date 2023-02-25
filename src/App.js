@@ -1,43 +1,51 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./App.css";
+import MovieCard from "./MovieCard";
+import SearchIcon from "./search.svg";
 
-const Person = (props) => {
-  return (
-    <>
-      <h5>Hello, I am</h5>
-      <h1>{props.name}</h1>
-      <h4>nice to meet you.</h4>
-      <hr width="100%"></hr>
-    </>
-  )
-}
+const OMDb_APIKEY = "90886304";
+const OMDB_API = "http://www.omdbapi.com?apikey=90886304";
 
-const ComponentPractice = () => {
-  const names = ['a','b','c','d']
+const App = () => {
+  const [movies, setMovies] = useState([]);
+  const [search, setSearch] = useState([]);
+
+  const searchMovies = async (title) => {
+    const res = await fetch(`${OMDB_API}&s=${title}`);
+    const data = await res.json();
+    setMovies(data.Search);
+  };
+  useEffect(() => {
+    searchMovies("claim");
+  }, []);
+
   return (
-    <div className="App">
-      <Person name="a" />
-      <Person name="aa" />
-      <Person name="aaa" />
-      <Person name="aaaa" />
+    <div className="app">
+      <h1>MOVIES</h1>
+      <div className="search">
+        <input
+          placeholder="Search for Movies"
+          value={search}
+          onChange={(e) => {
+            setSearch(e.target.value)
+          }}
+        />
+        <img src={SearchIcon} alt="search" onClick={() => {searchMovies(search)}}></img>
+      </div>
+      {movies.length > 0 ? (
+        <>
+          <div className="container">
+            {movies.map((movie) => (
+              <MovieCard movie_eg={movie} />
+            ))}
+          </div>
+        </>
+      ) : (
+        <>
+          <div>aa</div>
+        </>
+      )}
     </div>
   );
 };
-
-const App = () => {
-  const [counter, setCounter] = useState(0);
-  useEffect(()=> {
-    setCounter(100)
-  }, [])
-  // setCounter(100)
-  return (
-    <div className="App">
-      <button onClick={()=>{setCounter((prev)=>prev+1)}}>+</button>
-      <h1>{counter}</h1>
-      <button onClick={()=>{setCounter((prev)=>prev-1)}}>-</button>
-    </div>
-  )
-}
-
 export default App;
-
